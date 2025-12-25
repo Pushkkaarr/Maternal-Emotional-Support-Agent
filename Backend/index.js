@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const { pool } = require('./config/db');
 const motherRoutes = require('./routes/motherRoute');
+const dbProxyRoutes = require('./routes/dbProxy');
 dotenv.config();
 
 const app = express();
@@ -16,6 +17,7 @@ const PORT = process.env.PORT;
 app.use(express.json());
 
 app.use('/api/model', motherRoutes);
+app.use('/api/db', dbProxyRoutes);
 
 
 

@@ -12,9 +12,6 @@ export const sendMessage = async (message, familyMember) => {
     // Map family member to backend endpoint
     const modelEndpoints = {
       'mother': 'mother',
-      'father': 'father',
-      'sister': 'sister',
-      'brother': 'brother'
     };
     
     // Get the correct endpoint or default to 'mother'
@@ -36,5 +33,39 @@ export const sendMessage = async (message, familyMember) => {
     
     // Throw the error to be handled by the caller
     throw error;
+  }
+};
+
+// Donations / Wishlist API
+export const fetchWishlist = async () => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/api/db/wishlist`);
+    return res.data.data || [];
+  } catch (err) {
+    console.error('fetchWishlist error', err);
+    toast.error('Unable to load wishlist items');
+    return [];
+  }
+};
+
+export const createDonation = async (donationPayload) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/api/db/donations`, donationPayload);
+    return res.data;
+  } catch (err) {
+    console.error('createDonation error', err);
+    toast.error('Failed to submit donation');
+    throw err;
+  }
+};
+
+export const createPledge = async (pledgePayload) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/api/db/donation_pledges`, pledgePayload);
+    return res.data;
+  } catch (err) {
+    console.error('createPledge error', err);
+    toast.error('Failed to submit pledge');
+    throw err;
   }
 };

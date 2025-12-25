@@ -9,14 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, Calendar, DollarSign, GiftIcon, HandCoins, Heart, Package, PiggyBank, UserPlus } from 'lucide-react';
 import { toast } from "sonner";
-import { createBrowserClient } from '@supabase/ssr';
+import { fetchWishlist, createDonation, createPledge } from '../utils/apiService';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// Backend will handle DB access; frontend calls backend APIs via `apiService`
 
 const DonationPage = () => {
   // Form state
@@ -51,14 +48,7 @@ const DonationPage = () => {
   const fetchWishlistItems = async () => {
     try {
       setIsLoadingWishlist(true);
-      const { data, error } = await supabase
-        .from('inventory_requests')
-        .select('*')
-        .eq('display_on_wishlist', true)
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      
+      const data = await fetchWishlist();
       setWishlistItems(data || []);
     } catch (error) {
       console.error("Error fetching wishlist items:", error);
@@ -88,19 +78,15 @@ const DonationPage = () => {
     
     try {
       // Save donation to the donations table
-      const { error } = await supabase
-        .from('donations')
-        .insert([{
-          donor_name: donorName,
-          donor_email: donorEmail,
-          donor_phone: donorPhone,
-          donation_type: 'Money',
-          amount: donationAmount,
-          notes: itemDescription,
-          status: 'Pending'
-        }]);
-
-      if (error) throw error;
+      await createDonation({
+        donor_name: donorName,
+        donor_email: donorEmail,
+        donor_phone: donorPhone,
+        donation_type: 'Money',
+        amount: donationAmount,
+        notes: itemDescription,
+        status: 'Pending'
+      });
       
     // In a real app, we would connect to a payment gateway here
     toast.success("Thank you for your donation! Redirecting to payment...");
@@ -136,11 +122,7 @@ const DonationPage = () => {
       };
       
       // Save to donations table
-      const { error: donationError } = await supabase
-        .from('donations')
-        .insert([donationData]);
-        
-      if (donationError) throw donationError;
+      await createDonation(donationData);
       
       // If this is a pledge for a specific wishlist item
       if (selectedRequestId) {
@@ -161,11 +143,7 @@ const DonationPage = () => {
       }
         
         // Save to donation_pledges table
-        const { error: pledgeError } = await supabase
-          .from('donation_pledges')
-          .insert([pledgeData]);
-          
-        if (pledgeError) throw pledgeError;
+        await createPledge(pledgeData);
       }
       
       toast.success("Thank you for your donation! We'll be in touch soon.");
