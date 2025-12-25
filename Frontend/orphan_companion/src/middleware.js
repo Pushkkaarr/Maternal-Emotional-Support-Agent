@@ -35,11 +35,11 @@ export async function middleware(req) {
 
   // If there's no session and the user is trying to access a protected route
   if (!session && !req.nextUrl.pathname.startsWith('/auth')) {
-    // Redirect to the login page
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/';
-    redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    // Instead of redirecting (which changes the browser URL), rewrite to the
+    // root page so the original URL remains visible. Store the original
+    // pathname in a cookie so the client can restore it after authentication.
+    res.cookies.set({ name: 'redirectedFrom', value: req.nextUrl.pathname, path: '/' });
+    return NextResponse.rewrite(new URL('/', req.url));
   }
 
   return res;
