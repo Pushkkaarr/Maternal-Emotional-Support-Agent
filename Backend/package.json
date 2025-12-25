@@ -12,14 +12,18 @@
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "formidable": "^3.5.2",
+    "formidable": "^3.5.3",
     "pg": "^8.13.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
+  }
+  ,
+  "overrides": {
+    "brace-expansion": "^2.0.2"
   }
 }
