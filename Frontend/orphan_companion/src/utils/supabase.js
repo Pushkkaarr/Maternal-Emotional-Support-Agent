@@ -1,11 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize the Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables');
+// Supabase client removed from frontend.
+// This file intentionally throws to prevent accidental use of client-side DB access.
+export function supabaseClientNotAvailable() {
+  throw new Error('Supabase client removed from frontend. Use backend API endpoints under /api/* instead.');
 }
-
-export const supabase = createClient(supabaseUrl, supabaseKey); 

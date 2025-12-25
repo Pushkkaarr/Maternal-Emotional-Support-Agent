@@ -12,15 +12,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { createBrowserClient } from '@supabase/ssr';
+import { fetchChildren as apiFetchChildren, submitAdoptionApplication, createSponsorship } from '@/utils/apiService';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 // import { config } from "../config/appConfig";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// Supabase client removed from frontend — use backend API endpoints instead.
 
 // Sample progress data
 const progressData = [
@@ -51,7 +48,7 @@ const AdoptionPage = () => {
   // Define default photo at the component level
   const defaultPhoto = 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?q=80&w=1470&auto=format&fit=crop';
 
-  // Fetch children data from Supabase
+  // Fetch children data from backend
   useEffect(() => {
     fetchChildren();
   }, []);
@@ -59,17 +56,9 @@ const AdoptionPage = () => {
   const fetchChildren = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('children')
-        .select('*')
-        .in('status', ['Available'])
-        .eq('has_sponsor', false)
-        .order('created_at', { ascending: false });
+      const data = await apiFetchChildren();
 
-      if (error) throw error;
-      
-      // Transform data to match the structure used in the component
-      const transformedData = data.map(child => ({
+      const transformedData = (data || []).map(child => ({
         id: child.id,
         name: child.full_name,
         age: child.age,
@@ -117,31 +106,18 @@ const AdoptionPage = () => {
       const selectedChildData = getSelectedChildData();
       
       // Save adoption application data to Supabase
-      const { error } = await supabase
-        .from('adoption_applications')
-        .insert([{
-          child_id: selectedChild,
-          applicant_name: formData.fullName,
-          applicant_email: formData.email,
-          applicant_phone: formData.phone,
-          address: formData.address,
-          financial_info: formData.financialInfo,
-          reason: formData.message,
-          status: 'Pending Review',
-          application_date: new Date().toISOString()
-        }]);
-
-      if (error) throw error;
-      
-      // Update the child's status in the children table
-      const { error: updateError } = await supabase
-        .from('children')
-        .update({ 
-          status: 'In Adoption Process' 
-        })
-        .eq('id', selectedChild);
-      
-      if (updateError) throw updateError;
+      // submit adoption application via backend
+      await submitAdoptionApplication({
+        child_id: selectedChild,
+        applicant_name: formData.fullName,
+        applicant_email: formData.email,
+        applicant_phone: formData.phone,
+        address: formData.address,
+        financial_info: formData.financialInfo,
+        reason: formData.message,
+        status: 'Pending Review',
+        application_date: new Date().toISOString()
+      });
 
       toast.success(`Your adoption application for ${selectedChildData.name} has been submitted! Our team will contact you soon.`);
       
@@ -178,34 +154,19 @@ const AdoptionPage = () => {
     try {
       const selectedChildData = getSelectedChildData();
       
-      // Save sponsorship data to Supabase
-      const { error } = await supabase
-        .from('sponsorships')
-        .insert([{
-          child_id: selectedChild,
-          sponsor_name: formData.fullName,
-          sponsor_email: formData.email,
-          sponsor_phone: formData.phone,
-          monthly_amount: parseFloat(formData.sponsorshipAmount),
-          duration_months: formData.sponsorshipDuration === 'ongoing' ? null : parseInt(formData.sponsorshipDuration),
-          is_ongoing: formData.sponsorshipDuration === 'ongoing',
-          message: formData.message,
-          status: 'Active',
-          start_date: new Date().toISOString()
-        }]);
-
-      if (error) throw error;
-      
-      // Also update the child's sponsor status in the children table
-      const { error: updateError } = await supabase
-        .from('children')
-        .update({ 
-          has_sponsor: true,
-          sponsor_name: formData.fullName
-        })
-        .eq('id', selectedChild);
-      
-      if (updateError) throw updateError;
+      // Submit sponsorship via backend
+      await createSponsorship({
+        child_id: selectedChild,
+        sponsor_name: formData.fullName,
+        sponsor_email: formData.email,
+        sponsor_phone: formData.phone,
+        monthly_amount: parseFloat(formData.sponsorshipAmount),
+        duration_months: formData.sponsorshipDuration === 'ongoing' ? null : parseInt(formData.sponsorshipDuration),
+        is_ongoing: formData.sponsorshipDuration === 'ongoing',
+        message: formData.message,
+        status: 'Active',
+        start_date: new Date().toISOString()
+      });
 
       toast.success(`Thank you for sponsoring ${selectedChildData.name}! You'll receive details about your sponsored child soon.`);
       

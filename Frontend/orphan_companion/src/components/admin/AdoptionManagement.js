@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createBrowserClient } from '@supabase/ssr';
+// Supabase client removed from frontend — use backend API endpoints via '@/utils/apiService'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -26,10 +26,7 @@ import {
 import { format } from 'date-fns';
 import { toast } from "sonner";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase removed
 
 const AdoptionManagement = () => {
   const [fullAdoptions, setFullAdoptions] = useState([]);

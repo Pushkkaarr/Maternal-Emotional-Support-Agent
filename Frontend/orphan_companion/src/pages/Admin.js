@@ -10,13 +10,10 @@ import ReportsAnalytics from "@/components/admin/ReportsAnalytics";
 import Communication from "@/components/admin/Communication";
 import AdoptionManagement from "@/components/admin/AdoptionManagement";
 import UserManagement from "@/components/admin/UserManagement";
-import { createBrowserClient } from '@supabase/ssr';
+// Supabase client removed from frontend — use backend API endpoints via '@/utils/apiService'
 import { Button } from "@/components/ui/button";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase removed
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { createBrowserClient } from '@supabase/ssr';
+// Supabase client removed from frontend — use backend API endpoints via '@/utils/apiService'
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -24,10 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase removed
 
 const CATEGORIES = [
   { value: "Clothes", label: "Clothes" },

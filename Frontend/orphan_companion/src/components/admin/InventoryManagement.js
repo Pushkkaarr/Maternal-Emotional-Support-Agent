@@ -9,14 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createBrowserClient } from '@supabase/ssr';
+// Supabase client removed from frontend — use backend API endpoints via '@/utils/apiService'
 import InventoryMovements from "./InventoryMovements";
 import InventoryRequests from "./InventoryRequests";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase removed
 
 const CATEGORIES = [
   { value: "School Supplies", label: "School Supplies" },

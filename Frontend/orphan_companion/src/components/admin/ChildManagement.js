@@ -15,12 +15,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { createBrowserClient } from '@supabase/ssr';
-
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { fetchChildren as apiFetchChildren, createChild as apiCreateChild, updateChild as apiUpdateChild, deleteChild as apiDeleteChild } from '@/utils/apiService';
 
 const ChildManagement = () => {
   const [children, setChildren] = useState([]);
@@ -55,29 +50,22 @@ const ChildManagement = () => {
   });
 
   useEffect(() => {
-    fetchChildren();
+    loadChildren();
   }, []);
 
-  const fetchChildren = async () => {
+  const loadChildren = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('children')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
+      const data = await apiFetchChildren();
       setChildren(data || []);
-      
-      // Calculate stats
+
       const stats = {
         total: data?.length || 0,
         inAdoption: data?.filter(child => child.status === 'In Adoption Process')?.length || 0,
         inSchool: data?.filter(child => child.education_level && child.education_level !== 'None')?.length || 0,
         medicalNeeds: data?.filter(child => child.special_needs)?.length || 0
       };
-      
+
       setChildStats(stats);
     } catch (error) {
       console.error('Error fetching children:', error);
@@ -134,18 +122,12 @@ const ChildManagement = () => {
         throw new Error('Age must be a number');
       }
 
-      const { data, error } = await supabase
-        .from('children')
-        .insert([{ ...formData, age: ageAsNumber }])
-        .select();
-
-      if (error) throw error;
-
-      setChildren(prev => [data[0], ...prev]);
+      const created = await apiCreateChild({ ...formData, age: ageAsNumber });
+      setChildren(prev => [created, ...prev]);
       alert('Child added successfully');
       setIsAddOpen(false);
       resetForm();
-      fetchChildren(); // Refresh data
+      loadChildren(); // Refresh data
     } catch (error) {
       console.error('Error adding child:', error);
       alert(error.message || 'Failed to add child');
@@ -182,17 +164,11 @@ const ChildManagement = () => {
         throw new Error('Age must be a number');
       }
 
-      const { error } = await supabase
-        .from('children')
-        .update({ ...formData, age: ageAsNumber })
-        .eq('id', childToEdit.id);
-
-      if (error) throw error;
-
+      const updated = await apiUpdateChild(childToEdit.id, { ...formData, age: ageAsNumber });
       alert('Child updated successfully');
       setIsEditOpen(false);
       resetForm();
-      fetchChildren(); // Refresh data
+      loadChildren(); // Refresh data
     } catch (error) {
       console.error('Error updating child:', error);
       alert(error.message || 'Failed to update child');
@@ -211,16 +187,10 @@ const ChildManagement = () => {
   const handleDeleteChild = async (id) => {
     try {
       setIsDeleting(true);
-      const { error } = await supabase
-        .from('children')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await apiDeleteChild(id);
       setChildren(prev => prev.filter(child => child.id !== id));
       alert('Child deleted successfully');
-      fetchChildren(); // Refresh data
+      loadChildren(); // Refresh data
     } catch (error) {
       console.error('Error deleting child:', error);
       alert('Failed to delete child');

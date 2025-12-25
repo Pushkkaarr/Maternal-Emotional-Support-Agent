@@ -6,8 +6,6 @@ import ChatHeader from './chat/ChatHeader';
 import ChatMessages from './chat/ChatMessages';
 import ChatInput from './chat/ChatInput';
 import { welcomeMessages, voiceConfigs } from '../utils/chatUtils';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const ChatInterface = ({ initialModel = 'mom', showSidebar = true, toggleSidebar = () => {} }) => {
   const [selectedModel, setSelectedModel] = useState(initialModel);

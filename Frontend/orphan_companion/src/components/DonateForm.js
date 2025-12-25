@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+// Supabase client removed from frontend — use backend API endpoints via '@/utils/apiService'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,10 +14,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase removed
 
 const DonateForm = () => {
   const [formData, setFormData] = useState({

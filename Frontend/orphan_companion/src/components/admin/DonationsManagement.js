@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { fetchDonationsAdmin, updateDonation } from '@/utils/apiService';
 import {
   Table,
   TableBody,
@@ -30,10 +30,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
 
 const DonationsManagement = () => {
   const [donations, setDonations] = useState([]);
@@ -50,25 +46,19 @@ const DonationsManagement = () => {
   });
 
   useEffect(() => {
-    fetchDonations();
+    load();
   }, []);
 
-  const fetchDonations = async () => {
+  const load = async () => {
     try {
-      const { data, error } = await supabase
-        .from('donations')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await fetchDonationsAdmin();
       setDonations(data);
-      
-      // Calculate statistics
+
       const moneyDonations = data.filter(d => d.donation_type === 'Money');
       const totalMoney = moneyDonations.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
       const pendingCount = data.filter(d => d.status === 'Pending').length;
       const approvedCount = data.filter(d => d.status === 'Approved').length;
-      
+
       setDonationStats({
         totalMoneyDonations: totalMoney,
         pendingDonations: pendingCount,
@@ -84,13 +74,8 @@ const DonationsManagement = () => {
 
   const handleStatusChange = async (donationId, newStatus) => {
     try {
-      const { error } = await supabase
-        .from('donations')
-        .update({ status: newStatus })
-        .eq('id', donationId);
-
-      if (error) throw error;
-      fetchDonations();
+      await updateDonation(donationId, { status: newStatus });
+      load();
     } catch (error) {
       setError(error.message);
     }
@@ -100,14 +85,13 @@ const DonationsManagement = () => {
     if (!selectedDonation) return;
     
     try {
-      const { error } = await supabase
-        .from('donations')
-        .update({ notes: adminNotes })
-        .eq('id', selectedDonation.id);
-
-      if (error) throw error;
-      setIsViewDialogOpen(false);
-      fetchDonations();
+      try {
+        await updateDonation(selectedDonation.id, { notes: adminNotes });
+        setIsViewDialogOpen(false);
+        load();
+      } catch (err) {
+        setError(err.message);
+      }
     } catch (error) {
       setError(error.message);
     }

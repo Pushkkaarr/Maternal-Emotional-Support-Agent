@@ -8,13 +8,8 @@ import { LogIn, LogOut, Search, ArrowDownCircle, ArrowUpCircle, Loader2 } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { createBrowserClient } from '@supabase/ssr';
 import { format } from "date-fns";
-
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { fetchMovements as apiFetchMovements, fetchInventoryItems as apiFetchInventoryItems, createMovement as apiCreateMovement } from '@/utils/apiService';
 
 const InventoryMovements = () => {
   const [movements, setMovements] = useState([]);
@@ -34,44 +29,20 @@ const InventoryMovements = () => {
   });
 
   useEffect(() => {
-    fetchMovements();
-    fetchInventoryItems();
+    load();
   }, []);
 
-  const fetchMovements = async () => {
+  const load = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('inventory_movements')
-        .select(`
-          *,
-          inventory:inventory_id (item_name, unit)
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setMovements(data || []);
+      const [moves, items] = await Promise.all([apiFetchMovements(), apiFetchInventoryItems()]);
+      setMovements(moves || []);
+      setInventoryItems(items || []);
     } catch (error) {
-      console.error('Error fetching movements:', error);
-      alert('Could not load movement data');
+      console.error('Error loading inventory data:', error);
+      alert('Could not load inventory data');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchInventoryItems = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('inventory')
-        .select('id, item_name, unit, quantity')
-        .order('item_name');
-
-      if (error) throw error;
-
-      setInventoryItems(data || []);
-    } catch (error) {
-      console.error('Error fetching inventory items:', error);
     }
   };
 

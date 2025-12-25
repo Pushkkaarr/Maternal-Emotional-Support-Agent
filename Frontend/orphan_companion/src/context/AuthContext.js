@@ -1,11 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
 import { toast } from 'sonner';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+import { authSignup, authLogin, authLogout, fetchSession } from '@/utils/apiService';
 
 const AuthContext = createContext({});
 
@@ -14,102 +9,47 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    const load = async () => {
+      const res = await fetchSession();
+      setUser(res.user ?? null);
       setLoading(false);
-    });
-
-    // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    };
+    load();
   }, []);
 
   const signUp = async ({ email, password }) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
+      const res = await authSignup(email, password);
       toast.success('Check your email for the confirmation link!');
-      return { success: true, data };
+      return { success: true, data: res };
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Signup failed');
       return { success: false, error: error.message };
     }
   };
 
   const signIn = async ({ email, password }) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
+      const res = await authLogin(email, password);
+      // After login backend sets HttpOnly cookie; refresh session
+      const session = await fetchSession();
+      setUser(session.user ?? null);
       toast.success('Signed in successfully!');
-      return { success: true, data };
+      return { success: true, data: res };
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Login failed');
       return { success: false, error: error.message };
     }
   };
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      await authLogout();
       setUser(null);
       toast.success('Signed out successfully!');
       return { success: true };
     } catch (error) {
-      toast.error(error.message);
-      return { success: false, error: error.message };
-    }
-  };
-
-  const resetPassword = async (email) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
-
-      if (error) throw error;
-
-      toast.success('Password reset email sent!');
-      return { success: true };
-    } catch (error) {
-      toast.error(error.message);
-      return { success: false, error: error.message };
-    }
-  };
-
-  const createProfile = async ({ full_name, avatar_url }) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) throw new Error('No user found');
-
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          email: user.email,
-          full_name,
-          avatar_url,
-        });
-
-      if (error) throw error;
-
-      return { success: true };
-    } catch (error) {
+      toast.error(error.message || 'Logout failed');
       return { success: false, error: error.message };
     }
   };
@@ -118,8 +58,6 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signIn,
     signOut,
-    resetPassword,
-    createProfile,
     user,
   };
 
@@ -132,4 +70,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   return useContext(AuthContext);
-}; 
+};
