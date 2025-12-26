@@ -64,19 +64,19 @@ const Navbar = () => {
             <Link href="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
               Home
             </Link>
-            <Link href="/About" className={`nav-link ${isActive('/About') ? 'active' : ''}`}>
+            <Link href="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>
               About
             </Link>
-            <Link href="/Models" className={`nav-link ${isActive('/Models') ? 'active' : ''}`}>
+            <Link href="/models" className={`nav-link ${isActive('/models') ? 'active' : ''}`}>
               Family Models
             </Link>
-            <Link href="/Donation" className={`nav-link ${isActive('/Donation') ? 'active' : ''}`}>
+            <Link href="/donation" className={`nav-link ${isActive('/donation') ? 'active' : ''}`}>
               Donate
             </Link>
-            <Link href="/Adoption" className={`nav-link ${isActive('/Adoption') ? 'active' : ''}`}>
+            <Link href="/adoption" className={`nav-link ${isActive('/adoption') ? 'active' : ''}`}>
               Adopt
             </Link>
-            <Link href="/Community" className={`nav-link ${isActive('/Community') ? 'active' : ''}`}>
+            <Link href="/community" className={`nav-link ${isActive('/community') ? 'active' : ''}`}>
               Community
             </Link>
             
@@ -138,7 +138,7 @@ const Navbar = () => {
                 Home
               </Link>
               <Link
-                href="/About"
+                href="/about"
                 className={`text-lg py-2 ${
                   isActive('/about') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
                 }`}
@@ -147,7 +147,7 @@ const Navbar = () => {
                 About
               </Link>
               <Link
-                href="/Models"
+                href="/models"
                 className={`text-lg py-2 ${
                   isActive('/models') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
                 }`}
@@ -156,22 +156,31 @@ const Navbar = () => {
                 Family Models
               </Link>
               <Link
-                href="/Donation"
+                href="/donation"
                 className={`text-lg py-2 ${
-                  isActive('/Donation') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
+                  isActive('/donation') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Donate
               </Link>
               <Link
-                href="/Adoption"
+                href="/adoption"
                 className={`text-lg py-2 ${
-                  isActive('/Adoption') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
+                  isActive('/adoption') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Adopt
+              </Link>
+              <Link
+                href="/community"
+                className={`text-lg py-2 ${
+                  isActive('/community') ? 'text-family-deep-blue font-medium' : 'text-family-text-light'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Community
               </Link>
               
               {user ? (

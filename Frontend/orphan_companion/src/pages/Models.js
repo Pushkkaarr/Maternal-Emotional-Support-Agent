@@ -44,7 +44,7 @@ const ModelsPage = () => {
                 Start a conversation with any of our family models and experience 
                 the support and understanding you deserve.
               </p>
-              <Link href="/ChatBot" className="btn-primary inline-flex items-center gap-2">
+              <Link href="/chatbot" className="btn-primary inline-flex items-center gap-2">
                 Begin Your Conversation <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

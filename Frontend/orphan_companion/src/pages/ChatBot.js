@@ -42,7 +42,7 @@ const ChatBot = () => {
     <div className={`h-screen flex flex-col ${isDarkMode ? 'bg-[#111b21] text-white' : 'bg-[#f0f2f5] text-[#111b21]'}`}>
       {/* Header */}
       <div className={`p-4 flex items-center ${isDarkMode ? 'bg-[#202c33] border-[#222e35]' : 'bg-[#00a884] text-white'} transition-colors`}>
-        <Link href="/Models" className={`flex items-center gap-2 ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-white/80 hover:text-white'} transition-colors`}>
+        <Link href="/models" className={`flex items-center gap-2 ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-white/80 hover:text-white'} transition-colors`}>
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
         </Link>

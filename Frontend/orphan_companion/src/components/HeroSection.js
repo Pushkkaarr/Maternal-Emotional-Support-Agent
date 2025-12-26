@@ -20,10 +20,10 @@ const HeroSection = () => {
               {displayText}
             </p>
             <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-              <Link href="/Models" className="btn-primary flex items-center gap-2">
+              <Link href="/models" className="btn-primary flex items-center gap-2">
                 Start Chatting <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/Models" className="btn-secondary">
+              <Link href="/models" className="btn-secondary">
                 Explore Family Models
               </Link>
             </div>

@@ -367,7 +367,7 @@ const CommunityPanel = () => {
 
   // Go to profile page
   const goToProfile = () => {
-    router.push('/ProfileCommunity');
+    router.push('/profilecommunity');
   };
 
   return (

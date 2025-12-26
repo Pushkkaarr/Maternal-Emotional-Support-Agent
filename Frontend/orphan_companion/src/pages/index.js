@@ -77,7 +77,7 @@ const CallToAction = () => {
             Start chatting with our AI family members today and discover the support and understanding you deserve.
           </p>
           {user ? (
-            <Link href="/Models" className="btn-primary inline-flex items-center gap-2">
+            <Link href="/models" className="btn-primary inline-flex items-center gap-2">
               Start Your Conversation <ArrowRight className="w-4 h-4" />
             </Link>
           ) : (

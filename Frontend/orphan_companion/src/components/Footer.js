@@ -32,8 +32,8 @@ const Footer = () => {
               <li><Link href="/about" className="text-family-text-light hover:text-family-deep-blue transition-colors">About</Link></li>
               <li><Link href="/models" className="text-family-text-light hover:text-family-deep-blue transition-colors">Family Models</Link></li>
               <li><Link href="/chatbot" className="text-family-text-light hover:text-family-deep-blue transition-colors">Chatbot</Link></li>
-              <li><Link href="/Donation" className="text-family-text-light hover:text-family-deep-blue transition-colors">Donate</Link></li>
-              <li><Link href="/Adoption" className="text-family-text-light hover:text-family-deep-blue transition-colors">Adopt</Link></li>
+              <li><Link href="/donation" className="text-family-text-light hover:text-family-deep-blue transition-colors">Donate</Link></li>
+              <li><Link href="/adoption" className="text-family-text-light hover:text-family-deep-blue transition-colors">Adopt</Link></li>
             </ul>
           </div>
 
@@ -55,10 +55,10 @@ const Footer = () => {
               Help us provide care and connection to those who need it most.
             </p>
             <div className="flex flex-col space-y-2">
-              <Link href="/Donation" className="btn-primary inline-flex justify-center">
+              <Link href="/donation" className="btn-primary inline-flex justify-center">
                 Donate Today
               </Link>
-              <Link href="/Adoption" className="btn-secondary inline-flex justify-center">
+              <Link href="/adoption" className="btn-secondary inline-flex justify-center">
                 Sponsor a Child
               </Link>
             </div>
